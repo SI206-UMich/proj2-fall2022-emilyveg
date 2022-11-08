@@ -27,6 +27,21 @@ def get_listings_from_search_results(html_file):
     """
     pass
 
+    import requests
+
+    #get the response from the database
+    r = requests.get(html_file)
+
+    #create teh soup object
+    soup = BeautifulSoup(r.text, 'html.parser')
+
+    #find the stuff
+    title = soup.find('title')
+    rent = soup.find('cost')
+    id_num = soup.find('id')
+    
+
+
 
 def get_listing_information(listing_id):
     """
