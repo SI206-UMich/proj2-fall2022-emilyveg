@@ -1,7 +1,7 @@
 # Your name: Emily Veguilla
 # Your student id: 57347146
 # Your email: emilyveg@umich.edu
-# List who you have worked with on this project: Rachel Sondergeld, 
+# List who you have worked with on this project: Rachel Sondergeld, Morgan Huseby,Chris Saya
 
 from xml.sax import parseString
 from bs4 import BeautifulSoup
@@ -134,18 +134,17 @@ def get_listing_information(listing_id):
     else:
         place = "Entire Room"
     
-    num_rooms = soup.find_all('li', class_ = "l7n4lsf dir dir-ltr")[1]
-    num_rooms1 = num_rooms.find_all('span')[2].text
-    num = num_rooms1[0]
+    num_rooms = soup.find_all('li', class_ = "l7n4lsf dir dir-ltr")[1].find_all('span')[2]
+    num_rooms = num_rooms.text.split(" ")[0]
 
-    if "studio" in num.lower():
+    if "studio" in num_rooms.lower():
         total_rooms = 1
     else:
-        total_rooms = num
+        total_rooms = num_rooms
 
     tup = (policy_num, place, int(total_rooms))
 
-    print(tup)
+    # print(tup)
     return tup
 
 
@@ -163,7 +162,14 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+    
+    first = get_listings_from_search_results(html_file)
+    list = []
+    for f in first:
+        # print(f)
+        second = get_listing_information(f[2])
+        list.append(f + second)
+    return list 
 
 
 def write_csv(data, filename):
@@ -188,8 +194,14 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
-
+    data_name = sorted(data, key = lambda x:x[1])
+    f = open(filename, "w")
+    csv1 = csv.writer(f)
+    header = ["Listing Title","Cost","Listing ID", "Policy Number", "Place Type", "Number of Bedrooms"]
+    csv1.writerow(header)
+    for data1 in data_name:
+        csv1.writerow(data1)
+    f.close()
 
 def check_policy_numbers(data):
     """
@@ -269,52 +281,52 @@ class TestCases(unittest.TestCase):
             self.assertEqual(type(listing_information[2]), int)
         # check that the first listing in the html_list has policy number 'STR-0001541'
 
-    #     # check that the last listing in the html_list is a "Private Room"
+        # check that the last listing in the html_list is a "Private Room"
 
-    #     # check that the third listing has one bedroom
+        # check that the third listing has one bedroom
 
-    #     pass
+        pass
 
-    # def test_get_detailed_listing_database(self):
-    #     # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
-    #     # and save it to a variable
-    #     detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
-    #     # check that we have the right number of listings (20)
-    #     self.assertEqual(len(detailed_database), 20)
-    #     for item in detailed_database:
-    #         # assert each item in the list of listings is a tuple
-    #         self.assertEqual(type(item), tuple)
-    #         # check that each tuple has a length of 6
+    def test_get_detailed_listing_database(self):
+        # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
+        # and save it to a variable
+        detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
+        # check that we have the right number of listings (20)
+        self.assertEqual(len(detailed_database), 20)
+        for item in detailed_database:
+            # assert each item in the list of listings is a tuple
+            self.assertEqual(type(item), tuple)
+            # check that each tuple has a length of 6
 
-    #     # check that the first tuple is made up of the following:
-    #     # 'Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1
+        # check that the first tuple is made up of the following:
+        # 'Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1
 
-    #     # check that the last tuple is made up of the following:
-    #     # 'Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1
+        # check that the last tuple is made up of the following:
+        # 'Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1
 
-    #     pass
+        pass
 
-    # def test_write_csv(self):
-    #     # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
-    #     # and save the result to a variable
-    #     detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
-    #     # call write csv on the variable you saved
-    #     write_csv(detailed_database, "test.csv")
-    #     # read in the csv that you wrote
-    #     csv_lines = []
-    #     with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
-    #         csv_reader = csv.reader(f)
-    #         for i in csv_reader:
-    #             csv_lines.append(i)
-    #     # check that there are 21 lines in the csv
-    #     self.assertEqual(len(csv_lines), 21)
-    #     # check that the header row is correct
+    def test_write_csv(self):
+        # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
+        # and save the result to a variable
+        detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
+        # call write csv on the variable you saved
+        write_csv(detailed_database, "test.csv")
+        # read in the csv that you wrote
+        csv_lines = []
+        with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'test.csv'), 'r') as f:
+            csv_reader = csv.reader(f)
+            for i in csv_reader:
+                csv_lines.append(i)
+        # check that there are 21 lines in the csv
+        self.assertEqual(len(csv_lines), 21)
+        # check that the header row is correct
 
-    #     # check that the next row is Private room in Mission District,82,51027324,Pending,Private Room,1
+        # check that the next row is Private room in Mission District,82,51027324,Pending,Private Room,1
 
-    #     # check that the last row is Apartment in Mission District,399,28668414,Pending,Entire Room,2
+        # check that the last row is Apartment in Mission District,399,28668414,Pending,Entire Room,2
 
-    #     pass
+        pass
 
     # def test_check_policy_numbers(self):
     #     # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
