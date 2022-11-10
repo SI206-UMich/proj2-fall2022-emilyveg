@@ -62,6 +62,7 @@ def get_listings_from_search_results(html_file):
         file_name = 'html_files/listing_' + id + '.html'
         file = open(file_name)
         soup = BeautifulSoup(file, 'html.parser')
+        file.close()
 
         listing_title = soup.find('title')
         title = listing_title.text
@@ -111,11 +112,41 @@ def get_listing_information(listing_id):
     soup = BeautifulSoup(file, 'html.parser')
     file.close()
 
-    policy_num = soup.find('span', class_ = "ll4r2nl dir dir-ltr")
-    print(policy_num.text)
+    policy_num = soup.find('li', class_ = "f19phm7j dir dir-ltr").span.text
 
+    if "pending" in policy_num.lower():
+        policy_num = "Pending"
+    elif "exempt" in policy_num.lower():
+        policy_num = "Exempt"
+    elif "not needed" in policy_num.lower():
+        policy_num = "Exempt"
+    else:
+        policy_num = policy_num
 
-get_listing_information('1944564')
+    place_type = soup.find('h2', class_="_14i3z6h")
+    place = place_type.text
+
+    
+    if  "private" in place.lower():
+        place = "Private Room"
+    elif "shared" in place.lower():
+        place = "Shared Room"
+    else:
+        place = "Entire Room"
+    
+    num_rooms = soup.find_all('li', class_ = "l7n4lsf dir dir-ltr")[1]
+    num_rooms1 = num_rooms.find_all('span')[2].text
+    num = num_rooms1[0]
+
+    if "studio" in num.lower():
+        total_rooms = 1
+    else:
+        total_rooms = num
+
+    tup = (policy_num, place, int(total_rooms))
+
+    print(tup)
+    return tup
 
 
 def get_detailed_listing_database(html_file):
@@ -216,27 +247,27 @@ class TestCases(unittest.TestCase):
         # check that the last title is correct (open the search results html and find it)
         pass
 
-    # def test_get_listing_information(self):
-    #     html_list = ["1623609",
-    #                  "1944564",
-    #                  "1550913",
-    #                  "4616596",
-    #                  "6600081"]
-    #     # call get_listing_information for i in html_list:
-    #     listing_informations = [get_listing_information(id) for id in html_list]
-    #     # check that the number of listing information is correct (5)
-    #     self.assertEqual(len(listing_informations), 5)
-    #     for listing_information in listing_informations:
-    #         # check that each item in the list is a tuple
-    #         self.assertEqual(type(listing_information), tuple)
-    #         # check that each tuple has 3 elements
-    #         self.assertEqual(len(listing_information), 3)
-    #         # check that the first two elements in the tuple are string
-    #         self.assertEqual(type(listing_information[0]), str)
-    #         self.assertEqual(type(listing_information[1]), str)
-    #         # check that the third element in the tuple is an int
-    #         self.assertEqual(type(listing_information[2]), int)
-    #     # check that the first listing in the html_list has policy number 'STR-0001541'
+    def test_get_listing_information(self):
+        html_list = ["1623609",
+                     "1944564",
+                     "1550913",
+                     "4616596",
+                     "6600081"]
+        # call get_listing_information for i in html_list:
+        listing_informations = [get_listing_information(id) for id in html_list]
+        # check that the number of listing information is correct (5)
+        self.assertEqual(len(listing_informations), 5)
+        for listing_information in listing_informations:
+            # check that each item in the list is a tuple
+            self.assertEqual(type(listing_information), tuple)
+            # check that each tuple has 3 elements
+            self.assertEqual(len(listing_information), 3)
+            # check that the first two elements in the tuple are string
+            self.assertEqual(type(listing_information[0]), str)
+            self.assertEqual(type(listing_information[1]), str)
+            # check that the third element in the tuple is an int
+            self.assertEqual(type(listing_information[2]), int)
+        # check that the first listing in the html_list has policy number 'STR-0001541'
 
     #     # check that the last listing in the html_list is a "Private Room"
 
