@@ -163,12 +163,12 @@ def get_detailed_listing_database(html_file):
     ]
     """
     
-    first = get_listings_from_search_results(html_file)
+    first_set = get_listings_from_search_results(html_file)
     list = []
-    for f in first:
-        # print(f)
-        second = get_listing_information(f[2])
-        list.append(f + second)
+    for x in first_set:
+        # print(x)
+        second_set = get_listing_information(x[2])
+        list.append(x + second_set)
     return list 
 
 
@@ -194,14 +194,15 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    data_name = sorted(data, key = lambda x:x[1])
-    f = open(filename, "w")
-    csv1 = csv.writer(f)
-    header = ["Listing Title","Cost","Listing ID", "Policy Number", "Place Type", "Number of Bedrooms"]
-    csv1.writerow(header)
-    for data1 in data_name:
-        csv1.writerow(data1)
-    f.close()
+    data_list = sorted(data, key = lambda x:x[1])
+    # print(data_list)
+    file = open(filename, "w")
+    data_csv = csv.writer(file)
+    headings = ["Listing Title","Cost","Listing ID", "Policy Number", "Place Type", "Number of Bedrooms"]
+    data_csv.writerow(headings)
+    for data in data_list:
+        data_csv.writerow(data)
+    file.close()
 
 def check_policy_numbers(data):
     """
