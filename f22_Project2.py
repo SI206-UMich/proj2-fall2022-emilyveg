@@ -1,7 +1,7 @@
 # Your name: Emily Veguilla
 # Your student id: 57347146
 # Your email: emilyveg@umich.edu
-# List who you have worked with on this project: Rachel Sondergeld, Morgan Huseby, Chris Saya
+# List who you have worked with on this project: Rachel Sondergeld, Morgan Huesby, Chris Sayha
 
 from xml.sax import parseString
 from bs4 import BeautifulSoup
@@ -250,8 +250,12 @@ def check_policy_numbers(data):
 #     gone over their 90 day limit, else return True, indicating the lister has
 #     never gone over their limit.
 #     """
-#     pass
+#     listing_info = get_listing_information(listing_id)
 
+#     months = listing_info.find('li', class_ ="s11wgnhd dir dir-ltr").div.text
+#     print(months)
+
+#     pass
 
 class TestCases(unittest.TestCase):
 
@@ -264,10 +268,9 @@ class TestCases(unittest.TestCase):
         # check that the variable you saved after calling the function is a list
         self.assertEqual(type(listings), list)
         # check that each item in the list is a tuple
-
+        self.assertEqual(type(listings[0]), tuple)
         # check that the first title, cost, and listing id tuple is correct (open the search results html and find it)
         self.assertEqual(listings[0], ("Loft in Mission District", 210 , '1944564'))
-
         # check that the last title is correct (open the search results html and find it)
         self.assertEqual(listings[-1][0], ("Guest suite in Mission District"))
 
@@ -313,7 +316,7 @@ class TestCases(unittest.TestCase):
             # assert each item in the list of listings is a tuple
             self.assertEqual(type(item), tuple)
             # check that each tuple has a length of 6
-
+            self.assertEqual(len(item), 6)
         # check that the first tuple is made up of the following:
         # 'Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1
         self.assertEqual(detailed_database[0], ('Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1))
