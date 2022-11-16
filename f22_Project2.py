@@ -56,7 +56,6 @@ def get_listings_from_search_results(html_file):
         id_nums.append(listing.lstrip('listing_'))
     # print(id_nums)
 
-    #loop through listing ids to make tuples with listing title, cost, & id num
 
     listing_title = soup.find_all('div', class_= "t1jojoys dir dir-ltr")
     # print(listing_title)
